@@ -24,13 +24,15 @@ type exp =
       | Fun of ide list * exp
       | Appl of exp * exp list
       | Rec of ide * exp
-    and decl = (ide * exp) list (** (ide * exp ) list*)
+      | Proc of ide list * block
+    and decl = (ide * exp) list * (ide * exp ) list
 
     and com =
       | Assign of exp * exp
       | Cifthenelse of exp * com list * com list
       | While of exp * com list
       | Block of block
+      | Call of exp * exp list
     and block = ( decl * com list )
 type coml = com list
 
@@ -53,7 +55,9 @@ and dval =
       | Unbound
       | Dloc of  loc
       | Dfunval of efun
+      | Dprocval of proc
 and efun = ( (dval list) * (mval store) ) -> eval
+and proc = ( (dval list) * (mval store) ) -> mval store
 
 and mval =
       | Mint of int
@@ -71,10 +75,13 @@ let mvaltoeval m = match m with
 let evaltodval e = match e with
       | Int n -> Dint n
       | Bool n -> Dbool n
+      | Funval n -> Dfunval n
       | Novalue -> Unbound
 let dvaltoeval d = match d with
       | Dint n -> Int n
       | Dbool n -> Bool n
+      | Dfunval n -> Funval n
+      | Dprocval n -> raise Nonexpressible
       | Dloc n -> raise Nonexpressible
       | Unbound -> Novalue
 
@@ -146,13 +153,20 @@ and makefunrec ((i, Fun(ii, aa)), r) =
         let r1 = bind( bindlist(r, ii, d), i, Dfunval(ff) ) in sem aa r1 s1 in
                 let rec fix = function x -> functional fix x in Funval(fix)
 
+and makeproc ( (a:exp), (x:dval env) ) = match a with
+        | Proc(ii, b) -> Dprocval(function (d, s) -> semb b (bindlist(x, ii, d)) s)
+        | _ -> failwith("Non-functional object")
+
+
 and applyfun ( (ev1: dval), (ev2:dval list), s ) =
         match ev1 with
         | Dfunval(x) -> x(ev2, s)
         | _ -> failwith ("Attempt to apply a non-functional object")
 
 
-
+and applyproc ( ( ev1: dval), (ev2: dval list), s ) = match ev1 with
+        | Dprocval(x) -> x(ev2, s)
+        | _ -> failwith("Attempt to apply a non-functional Proc object")
 
 and sem (e: exp) (r: dval env) (s: mval store) =
   match e with
@@ -190,6 +204,8 @@ and sem (e: exp) (r: dval env) (s: mval store) =
 
 and semden (e:exp) (r:dval env) (s:mval store) = match e with
       | Den(i) -> (applyenv(r,i), s)
+      | Fun(i, e1) -> (makefun(e,r), s)
+      | Proc(i, b) -> (makeproc(e, r), s)
       | Newloc(e) -> let m = evaltomval(sem e r s) in let (l, s1) =  allocate(s, m) in (Dloc l, s1)
       | _ -> (evaltodval(sem e r s), s )
 
@@ -200,7 +216,7 @@ and semlist el r s = match el with
 (*---- till here all's good --------*)
 
 
-let rec semc (c:com) (r:dval env) (s:mval store) = match c with
+and semc (c:com) (r:dval env) (s:mval store) = match c with
       | Assign(e1, e2) -> let (v1, s1) = semden e1 r s  in (match v1 with
           | Dloc(n) ->  update(s1, n, evaltomval(sem e2 r s))
           | _ -> failwith("wrong location in assignment"))
@@ -234,6 +250,8 @@ let rec semc (c:com) (r:dval env) (s:mval store) = match c with
                                 else failwith ("nonboolean guard")
             in
             let rec ssfix = function x -> (functional ssfix) x in ssfix(s)
+      | Call(e1, e2) -> let (p, s1) = semden e1 r s in let (v, s2) = semlist e2 r s1 in
+            applyproc(p, v, s2)
       | Block(b) -> semb b r s
 
 
@@ -241,22 +259,23 @@ and semcl cl r s = match cl with
       | [] -> s
       | c::cl1 -> semcl cl1 r (semc c r s)
 
-and semb (dl, cl) r s = let (r1, s1) = semdv dl r s in
+and semb ((dl, rdl), (cl:com list)) r s = let (r1, s1) = semdl (dl, rdl) r s in
                                               semcl cl r1 s1
-(*
+
 and semdl (dl, rl) r s = let (r1, s1) = semdv dl r s in
                                             semdr rl r1 s1
-*)
-and semdv dl r s =
+
+and semdv (dl) r s =
       match dl with
       | [] -> (r, s)
       | (i,e)::dl1 -> let (v, s1) = semden e r s in
                                     semdv dl1 (bind(r, i, v)) s1
-(*
+
+
+
 and semdr rl r s =
       let functional ((r1: dval env)) = (match rl with
           | [] -> r
           | (i, e) :: rl1 -> let (v, s2) = semden e r1 s in
                                               let (r2, s3) = semdr rl1 (bind(r, i, v)) s in r2) in
-                                                 let rec rfix = function rho -> functional rfix rho in (rfix, s)
-*)
+                                                  let rec rfix = function rho -> functional rfix rho in (rfix, s)
