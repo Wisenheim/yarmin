@@ -1,5 +1,5 @@
 
-      type 't env
+      type 't env = string -> 't
       val emptyenv : 't -> 't env
       val applyenv : 't env * string -> 't
       val bind : 'a env * string * 'a -> 'a env
