@@ -8,7 +8,7 @@
 
 %token <int> EINT
 %token <bool> EBOOL
-%token <string> Estring
+%token <string> ESTRING
 %token DEN
 %token LPAREN RPAREN LBRACK RBRACK
 %token SEMICOLON COMMA ESCDQUOTE
@@ -19,15 +19,16 @@
 %token EREFLECT
 %token LET VAL NEWLOC
 %token FUN APPL REC
-%token IFTHENESLE
+%token IFTHENELSE
 %token EOF
-%nonassoc UMINUS
 
 
 
-%start <Yarmin.coml> main
+
+%start program
+%type <Yarmin.exp>  program
 %%
-main:
+program:
     | v = expr EOF { v }
     | EOF          { Empty }
 ;

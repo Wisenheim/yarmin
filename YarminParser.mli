@@ -1,25 +1,44 @@
-type token =
-  | INT of (int)
-  | BOOL of (bool)
-  | ID of (string)
-  | PLUS
-  | MINUS
-  | TIMES
-  | OR
-  | EQUAL
-  | AND
-  | SEMICOLON
-  | NOT
-  | IF
-  | THEN
-  | ELSE
-  | WHILE
-  | DO
-  | ASSIGN
-  | LPAREN
-  | RPAREN
-  | EOL
-  | EOF
 
-val main :
-  (Lexing.lexbuf  -> token) -> Lexing.lexbuf -> Yarmin.coml
+(* The type of tokens. *)
+
+type token = 
+  | VAL
+  | TIMES
+  | SUM
+  | SUBSTR
+  | SEMICOLON
+  | RPAREN
+  | REC
+  | RBRACK
+  | OR
+  | NOT
+  | NEWLOC
+  | MINUS
+  | LPAREN
+  | LET
+  | LEN
+  | LBRACK
+  | ISZERO
+  | IFTHENELSE
+  | FUN
+  | ESTRING of (string)
+  | ESCDQUOTE
+  | EREFLECT
+  | EQUAL
+  | EOF
+  | EINT of (int)
+  | EBOOL of (bool)
+  | DIFF
+  | DEN
+  | COMMA
+  | CAT
+  | APPL
+  | AND
+
+(* This exception is raised by the monolithic API functions. *)
+
+exception Error
+
+(* The monolithic API. *)
+
+val program: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (Yarmin.exp)
