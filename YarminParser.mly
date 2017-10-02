@@ -33,6 +33,7 @@ program:
     | EOF          { Empty }
 ;
 
+
 expr:
   | DIFF LPAREN a = expr COMMA b = expr RPAREN                        { Diff(a, b) }
   | TIMES LPAREN a = expr COMMA b = expr RPAREN                       { Prod(a, b) }

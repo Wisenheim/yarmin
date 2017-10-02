@@ -78,6 +78,7 @@ and read_string buf =
         { Buffer.add_string buf (Lexing.lexeme lexbuf);
           read_string buf lexbuf
         }
+        
   | '"'       { ESTRING (Buffer.contents buf) }
   | _     { raise (SyntaxError( "Illegal string character: " ^ Lexing.lexeme lexbuf)) }
   | eof     { raise (SyntaxError( "String is not terminated")) }
