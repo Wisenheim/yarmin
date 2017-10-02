@@ -6,43 +6,55 @@
 %}
 
 
-%token <int> INT
-%token <bool> BOOL
-%token <string> ID
-%token PLUS MINUS TIMES OR EQUAL AND SEMICOLON NOT IF THEN ELSE WHILE DO ASSIGN
-%token LPAREN RPAREN
-%token EOL EOF
-%left OR AND EQUAL
-%left PLUS MINUS
-%left TIMES
+%token <int> EINT
+%token <bool> EBOOL
+%token <string> Estring
+%token DEN
+%token LPAREN RPAREN LBRACK RBRACK
+%token SEMICOLON COMMA ESCDQUOTE
+%token DIFF TIMES SUM EQUAL
+%token OR AND
+%token MINUS ISZERO NOT
+%token LEN CAT SUBSTR
+%token EREFLECT
+%token LET VAL NEWLOC
+%token FUN APPL REC
+%token IFTHENESLE
+%token EOF
 %nonassoc UMINUS
-%start main
-%type <Yarmin.coml> main
+
+
+
+%start <Yarmin.coml> main
 %%
 main:
-    coml EOL { $1 }
-;
-coml:
-    com { [$1] }
-  | com SEMICOLON coml  { cons $1 $3 }
-;
-com:
-    ID ASSIGN expr { Assign(Den($1),$3) }
-  | IF LPAREN expr RPAREN THEN coml ELSE coml { Cifthenelse($3, $6, $8) }
-  | WHILE LPAREN expr RPAREN DO coml   { While($3, $6) }
+    | v = expr EOF { v }
+    | EOF          { Empty }
 ;
 
 expr:
-    INT { Eint($1) }
-  | BOOL { Ebool($1) }
-  | ID   { Den($1) }
-  | expr PLUS expr  { Sum($1, $3) }
-  | expr MINUS expr { Diff($1, $3) }
-  | expr TIMES expr { Prod($1, $3) }
-  | expr OR expr { Or($1, $3) }
-  | expr EQUAL expr { Eq($1, $3) }
-  | expr AND expr { And($1, $3) }
-  | NOT expr { Not($2) }
-  | MINUS expr %prec UMINUS { Minus($2) }
-  | IF expr THEN expr ELSE expr { Ifthenelse($2, $4, $6) }
+  | DIFF LPAREN a = expr COMMA b = expr RPAREN                        { Diff(a, b) }
+  | TIMES LPAREN a = expr COMMA b = expr RPAREN                       { Prod(a, b) }
+  | SUM LPAREN a = expr COMMA b = expr RPAREN                         { Sum(a, b) }
+  | EQUAL LPAREN a = expr COMMA b = expr RPAREN                       { Eq(a, b) }
+  | AND LPAREN a = expr COMMA b = expr RPAREN                         { And(a, b) }
+  | OR LPAREN a = expr COMMA b = expr RPAREN                          { Or(a, b) }
+  | MINUS LPAREN a = expr RPAREN                                      { Minus(a)}
+  | ISZERO LPAREN a = expr RPAREN                                     { Iszero(a) }
+  | NOT LPAREN a = expr RPAREN                                        { Not(a) }
+  | LEN LPAREN a = expr RPAREN                                        { Len(a) }
+  | CAT LPAREN a  = expr COMMA b = expr RPAREN                        { Cat(a, b) }
+  | SUBSTR LPAREN a = expr COMMA b = expr COMMA c = expr RPAREN       { Substr(a, b, c) }
+  | IFTHENELSE LPAREN a = expr COMMA b = expr COMMA c = expr RPAREN   { Ifthenelse(a, b, c) }
+  | LET LPAREN DEN s = ESTRING COMMA b = expr COMMA c = expr RPAREN   { Let(s, b, c) }
+  | VAL LPAREN a = expr RPAREN                                        { Val(a) }
+  | NEWLOC LPAREN a = expr RPAREN                                     { Newloc(a) }
+  | FUN LPAREN idl = list(ESTRING) COMMA b = expr RPAREN              { Fun(idl, b) }
+  | APPL LPAREN a = expr COMMA exl = list(expr) RPAREN                { Appl(a, exl) }
+  | REC LPAREN DEN s = ESTRING COMMA b = expr RPAREN                  { Rec(s, b) }
+  | EREFLECT LPAREN a = expr RPAREN                                   { Ereflect(a) }
+  | DEN a = EINT                                                      { Eint a }
+  | DEN s = ESTRING                                                   { Estring s }
+  | DEN b = EBOOL                                                     { Ebool b }
+
 ;

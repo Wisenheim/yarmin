@@ -13,6 +13,9 @@ type exp =
       | Eq of exp * exp
       | Minus of exp
       | Iszero of exp
+      | Len of exp
+      | Cat of exp * exp
+      | Substr of exp * exp * exp
       | Or of exp * exp
       | And of exp * exp
       | Not of exp
@@ -25,6 +28,7 @@ type exp =
       | Appl of exp * exp list
       | Rec of ide * exp
       | Proc of ide list * block
+
     and decl = (ide * exp) list * (ide * exp ) list
 
     and com =
@@ -46,12 +50,14 @@ exception Nonexpressible
 type eval =
       | Int of int
       | Bool of bool
+      | String of string
       | Novalue
       | Funval of efun
 
 and dval =
       | Dint of int
       | Dbool of bool
+      | Dstring of string
       | Unbound
       | Dloc of  loc
       | Dfunval of efun
@@ -62,24 +68,29 @@ and proc = ( (dval list) * (mval store) ) -> mval store
 and mval =
       | Mint of int
       | Mbool of bool
+      | Mstring of string
       | Undefined
 
 let evaltomval e = match e with
       | Int n -> Mint n
       | Bool n -> Mbool n
+      | String s -> Mstring s
       | _ -> raise Nonstorable
 let mvaltoeval m = match m with
       | Mint n -> Int n
       | Mbool n -> Bool n
+      | Mstring s -> String s
       | _ -> Novalue
 let evaltodval e = match e with
       | Int n -> Dint n
       | Bool n -> Dbool n
+      | String s -> Dstring s
       | Funval n -> Dfunval n
       | Novalue -> Unbound
 let dvaltoeval d = match d with
       | Dint n -> Int n
       | Dbool n -> Bool n
+      | Dstring s -> String s
       | Dfunval n -> Funval n
       | Dprocval n -> raise Nonexpressible
       | Dloc n -> raise Nonexpressible
@@ -102,6 +113,9 @@ let typecheck (x, y) = match x with
       | "bool" -> (match y with
           | Bool(u) -> true
           | _ -> false)
+      | "string" -> (match y with
+          | String(u) -> true
+          | _ -> false )
       | _ -> failwith ("not a valid type")
 
 let minus x = if typecheck("int",x) then (match x with Int(y) -> Int(-y) )
@@ -121,6 +135,17 @@ let plus (x,y) = if typecheck("int",x) & typecheck("int",y)
 let diff (x,y) = if typecheck("int",x) & typecheck("int",y)
           then (match (x,y) with (Int(u), Int(w)) -> Int(u-w))
           else failwith ("type error")
+
+let len x = if typecheck ("string", x) then (match x with String(y) -> Int(String.length y))
+            else failwith ("Type Error")
+
+let cat (x, y) = if typecheck ("string", x) && typecheck ("string", y)
+                 then (match (x, y) with (String(u), String(w)) -> String(u ^ w))
+                 else failwith ("Type Error")
+
+let substr (x, y, z) = if typecheck ("string", x) && typecheck ("int", y) && typecheck ("int", z) && (y <= z)
+                       then (match (x, y, z) with (String(u), Int(v), Int(w)) -> String(String.sub u v (w-v+1)))
+                       else failwith ("Type Error")
 
 let mult (x,y) = if typecheck("int",x) & typecheck("int",y)
           then (match (x,y) with (Int(u), Int(w)) -> Int(u*w))
@@ -172,7 +197,11 @@ and sem (e: exp) (r: dval env) (s: mval store) =
   match e with
       | Eint(n) -> Int(n)
       | Ebool(b) -> Bool(b)
+      | Estring(n) -> String(n)
       | Den(i) -> dvaltoeval(applyenv(r,i))
+      | Len(a) -> len( sem a r s )
+      | Cat(a, b) -> cat( (sem a r s), (sem b r s) )
+      | Substr(a, b, c) -> substr ( (sem a r s), (sem b r s), (sem c r s) )
       | Iszero(a) -> iszero((sem a r s) )
       | Eq(a,b) -> equ((sem a r s),(sem b r s) )
       | Prod(a,b) -> mult((sem a r s), (sem b r s))
