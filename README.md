@@ -4,7 +4,7 @@ This README would normally document whatever steps are necessary to get your app
 
 ### What is this repository for? ###
 
-* This repo contains a try to extend the OCaml language, adding some utilities.
+* This repo presents an open source project for extanding the OCaml language, adding some utilities.
 * Version 2017.01
 * [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
 
