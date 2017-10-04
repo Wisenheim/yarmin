@@ -220,6 +220,7 @@ and sem (e: exp) (r: dval env) (s: mval store) =
       | And(a,b) -> et ((sem a r s), (sem b r s))
       | Or(a,b) -> vel( (sem a r s), (sem b r s))
       | Not(a) -> non( (sem a r s))
+      | Ereflect (c) -> reflect( (sem c r s) )
       | Ifthenelse(a,b,c) ->
             let g = sem a r s in
             if typecheck("bool",g) then
@@ -239,6 +240,34 @@ and sem (e: exp) (r: dval env) (s: mval store) =
       | Rec(i, e1) -> makefunrec((i, e1), r)
       | Appl(a, b) -> let (v1, s1) = semlist b r s in applyfun(evaltodval(sem a r s), v1, s1)
       | _ -> failwith ("Non legal expression for sem")
+
+and astExpSem (e: Ast.exp ) (r: dval env) (s: mval store) =
+      match e with
+      | Eint(n) -> Int(n)
+      | Ebool(n) -> Bool(n)
+      | Estring(n) -> String(n)
+      | Den(i) -> dvaltoeval( applyenv(r, i) )
+      | Len(a) -> len( astExpSem a r s )
+      | Cat(a, b) -> cat ( (astExpSem a r s), (astExpSem b r s ) )
+      | Substr(a, b, c) -> substr ( ( astExpSem a r s), (astExpSem b r s), (astExpSem c r s) )
+      | Iszero(a) -> iszero( (astExpSem a r s) )
+      | Eq(a, b) -> equ (( astExpSem a r s ), (astExpSem b r s))
+      | Prod(a, b) -> mult( (astExpSem a r s ), ( astExpSem b r s) )
+      | Sum(a, b) -> plus((astExpSem a r s), (astExpSem b r s))
+      | Diff(a, b) -> diff((astExpSem a r s), (astExpSem b r s))
+      | Minus(a) -> minus( (astExpSem a r s) )
+      | And(a, b) -> et ((astExpSem a r s), (astExpSem b r s))
+      | Or(a, b) -> vel ((astExpSem a r s), (astExpSem b r s))
+      | Not(a) -> non( (astExpSem a r s) )
+  	  | Ereflect (c) -> reflect( (astExpSem c r s) )
+      | Ifthenelse(a,b,c) ->
+              let g = astExpSem a r s in
+              if typecheck("bool", g) then
+                  (if g = Bool(true)
+                   then astExpSem b r s
+                   else astExpSem c r s)
+              else failwith ("non-boolean guard")
+      | _ -> failwith("Non legal expression for sem")
 
 and semden (e:exp) (r:dval env) (s:mval store) = match e with
       | Den(i) -> (applyenv(r,i), s)
@@ -317,3 +346,7 @@ and semdr rl r s =
           | (i, e) :: rl1 -> let (v, s2) = semden e r1 s in
                                               let (r2, s3) = semdr rl1 (bind(r, i, v)) s in r2) in
                                                   let rec rfix = function rho -> functional rfix rho in (rfix, s)
+
+and reflect x = if typecheck ("string", x)
+                then ( match x with String(u) -> astExpSem ((YarminParser.prog YarminLexer.read (Lexing.from_string u) )) (emptyenv Unbound) (emptystore Undefined) )
+                else failwith ("Type Error")
