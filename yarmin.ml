@@ -348,5 +348,5 @@ and semdr rl r s =
                                                   let rec rfix = function rho -> functional rfix rho in (rfix, s)
 
 and reflect x = if typecheck ("string", x)
-                then ( match x with String(u) -> astExpSem ((YarminParser.prog YarminLexer.read (Lexing.from_string u) )) (emptyenv Unbound) (emptystore Undefined) )
+                then ( match x with String(u) -> astExpSem ((YarminParser.program YarminLexer.read (Lexing.from_string u) )) (emptyenv Unbound) (emptystore Undefined) )
                 else failwith ("Type Error")
