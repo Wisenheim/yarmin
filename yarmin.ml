@@ -133,15 +133,15 @@ let minus x = if typecheck("int",x) then (match x with Int(y) -> Int(-y) )
 let iszero x = if typecheck("int",x) then (match x with Int(y) -> Bool(y=0) )
           else failwith ("type error")
 
-let equ (x,y) = if typecheck("int",x) & typecheck("int",y)
+let equ (x,y) = if typecheck("int",x) && typecheck("int",y)
           then (match (x,y) with (Int(u), Int(w)) -> Bool(u = w))
           else failwith ("type error")
 
-let plus (x,y) = if typecheck("int",x) & typecheck("int",y)
+let plus (x,y) = if typecheck("int",x) && typecheck("int",y)
           then (match (x,y) with (Int(u), Int(w)) -> Int(u+w))
           else failwith ("type error")
 
-let diff (x,y) = if typecheck("int",x) & typecheck("int",y)
+let diff (x,y) = if typecheck("int",x) && typecheck("int",y)
           then (match (x,y) with (Int(u), Int(w)) -> Int(u-w))
           else failwith ("type error")
 
@@ -156,17 +156,17 @@ let substr (x, y, z) = if typecheck ("string", x) && typecheck ("int", y) && typ
                        then (match (x, y, z) with (String(u), Int(v), Int(w)) -> String(String.sub u v (w-v+1)))
                        else failwith ("Type Error")
 
-let mult (x,y) = if typecheck("int",x) & typecheck("int",y)
+let mult (x,y) = if typecheck("int",x) && typecheck("int",y)
           then (match (x,y) with (Int(u), Int(w)) -> Int(u*w))
           else failwith ("type error")
 
 
-let et (x,y) = if typecheck("bool",x) & typecheck("bool",y)
-          then (match (x,y) with (Bool(u), Bool(w)) -> Bool(u & w))
+let et (x,y) = if typecheck("bool",x) && typecheck("bool",y)
+          then (match (x,y) with (Bool(u), Bool(w)) -> Bool(u && w))
           else failwith ("type error")
 
-let vel (x,y) = if typecheck("bool",x) & typecheck("bool",y)
-          then (match (x,y) with (Bool(u), Bool(w)) -> Bool(u or w))
+let vel (x,y) = if typecheck("bool",x) && typecheck("bool",y)
+          then (match (x,y) with (Bool(u), Bool(w)) -> Bool(u || w))
           else failwith ("type error")
 
 let non x = if typecheck("bool",x)
