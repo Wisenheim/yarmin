@@ -41,4 +41,4 @@ exception Error
 
 (* The monolithic API. *)
 
-val program: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (Yarmin.exp)
+val program: (Lexing.lexbuf -> token) -> Lexing.lexbuf -> (Ast.exp)

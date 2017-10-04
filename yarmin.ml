@@ -9,8 +9,10 @@ open Scanf
 (* ------------------------------ Domini Sintatici ---------------------------*)
 type ide = string
 type exp =
+      | Empty
       | Eint of int
       | Ebool of bool
+      | Estring of string
       | Den of ide
       | Prod of exp * exp
       | Sum of exp * exp
@@ -33,6 +35,7 @@ type exp =
       | Appl of exp * exp list
       | Rec of ide * exp
       | Proc of ide list * block
+      | Ereflect of exp
 
     and decl = (ide * exp) list * (ide * exp ) list
 
@@ -57,6 +60,7 @@ type eval =
       | Bool of bool
       | String of string
       | Novalue
+      | Reflect of exp
       | Funval of efun
 
 and dval =

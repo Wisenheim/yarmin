@@ -1,8 +1,7 @@
 /*------------------------------------- Yarmin -- Parser --------------------- */
 
 %{
-  open Yarmin
-  include List
+  open Ast
 %}
 
 
@@ -26,7 +25,7 @@
 
 
 %start program
-%type <Yarmin.exp>  program
+%type <Ast.exp>  program
 %%
 program:
     | v = expr EOF { v }

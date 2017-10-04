@@ -330,12 +330,12 @@ and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
 
   | 27 ->
 # 58 "YarminLexer.mll"
-                 ( LEFT_P )
+                 ( LPAREN )
 # 335 "YarminLexer.ml"
 
   | 28 ->
 # 59 "YarminLexer.mll"
-                 ( RIGHT_P )
+                 ( RPAREN )
 # 340 "YarminLexer.ml"
 
   | 29 ->
@@ -345,12 +345,12 @@ and __ocaml_lex_read_rec lexbuf __ocaml_lex_state =
 
   | 30 ->
 # 61 "YarminLexer.mll"
-                 ( LEFT_BRACK )
+                 ( LBRACK )
 # 350 "YarminLexer.ml"
 
   | 31 ->
 # 62 "YarminLexer.mll"
-                 ( RIGHT_BRACK )
+                 ( RBRACK )
 # 355 "YarminLexer.ml"
 
   | 32 ->

@@ -55,11 +55,11 @@ rule read = parse
     | "Appl"     { APPL }
     | "Rec"      { REC }
     | '"'        { read_string (Buffer.create 80) lexbuf }
-    | '('        { LEFT_P }
-    | ')'        { RIGHT_P }
+    | '('        { LPAREN }
+    | ')'        { RPAREN }
     | ','        { COMMA }
-    | '['        { LEFT_BRACK }
-    | ']'        { RIGHT_BRACK }
+    | '['        { LBRACK }
+    | ']'        { RBRACK }
     | ';'        { SEMICOLON }
     | _          { raise (SyntaxError( "Unexpected char: " ^ Lexing.lexeme lexbuf)) }
     | eof        { EOF }
@@ -78,7 +78,7 @@ and read_string buf =
         { Buffer.add_string buf (Lexing.lexeme lexbuf);
           read_string buf lexbuf
         }
-        
+
   | '"'       { ESTRING (Buffer.contents buf) }
   | _     { raise (SyntaxError( "Illegal string character: " ^ Lexing.lexeme lexbuf)) }
   | eof     { raise (SyntaxError( "String is not terminated")) }
