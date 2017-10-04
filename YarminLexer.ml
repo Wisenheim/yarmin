@@ -423,17 +423,17 @@ and __ocaml_lex_read_string_rec buf lexbuf __ocaml_lex_state =
 # 424 "YarminLexer.ml"
 
   | 9 ->
-# 81 "YarminLexer.mll"
+# 82 "YarminLexer.mll"
               ( ESTRING (Buffer.contents buf) )
 # 429 "YarminLexer.ml"
 
   | 10 ->
-# 82 "YarminLexer.mll"
+# 83 "YarminLexer.mll"
           ( raise (SyntaxError( "Illegal string character: " ^ Lexing.lexeme lexbuf)) )
 # 434 "YarminLexer.ml"
 
   | 11 ->
-# 83 "YarminLexer.mll"
+# 84 "YarminLexer.mll"
             ( raise (SyntaxError( "String is not terminated")) )
 # 439 "YarminLexer.ml"
 

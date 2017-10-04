@@ -1,5 +1,10 @@
 open Funenv
 open Funstore
+open Lexing
+open Ast
+open YarminParser
+open YarminLexer
+open Scanf
 
 (* ------------------------------ Domini Sintatici ---------------------------*)
 type ide = string
