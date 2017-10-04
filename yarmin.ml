@@ -229,8 +229,8 @@ and sem (e: exp) (r: dval env) (s: mval store) =
               else sem c r s)
             else failwith ("non-boolean guard")
       | Val(e) -> let (v, s1) = semden e r s in (match v with
-            | Dloc n -> mvaltoeval( applystore(s1, n)))
-            | _ -> failwith("not a variable")
+            | Dloc n -> mvaltoeval( applystore(s1, n))
+            | _ -> failwith("not test a variable"))
       (*| Val(e) -> match semden e r s with
                         | Dloc n -> mvaltoeval( applystore(s, n))
                         | _ -> failwith("not a variable")*)
