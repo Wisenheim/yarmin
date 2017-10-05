@@ -1,0 +1,64 @@
+\chapter{ Desing Choice }
+
+
+As a starting point, I used the denotation interpreter.
+I chose to develop a denotational interpreter since adding
+new constructs are simpler than the operative interpreter.\newline
+
+The interpreter is characterized by a dynamic local environment and a static non-local environment.\newline
+
+To simplify writing code from terminal to ocaml, I used rlwrap.\newline
+The interpreter therefore consists of a series of functions divided into several files.
+
+To start the program:
+\newline
+\textbf{1.} Get in the Path of the project directory;\newline
+\textbf{2.} Run the script \textbf{compileAll.sh} to compile.\newline
+\textbf{3.} Run the command  \textbf{rlwrap ocaml}\newline
+\textbf{4.} Insert  \textbf{\#use "loadAll.ml";;}\newline
+
+
+
+In the development of the reflection operation, I decided to write a
+parser via \textbf{Menhir}, which is the evolution of the previous Ocamlyacc parser for OCaml.
+Using it together with the use of ocamllex, or lexer, I have written a grammar
+for the language so that I can properly interpret correctly any string passed as an argument of the reflect function and so on assigning the correct semantic evaluation.
+
+All various test, can be executed by the command \textbf{\#use "YarminTest.ml";;}
+
+\newpage
+\subsection{ Files }
+\begin{itemize}
+\item \textbf{loadAll.ml}: Used for run the program.\newline
+\item \textbf{Funstore.mli}: Store Interface .\newline
+\item \textbf{Funstore.ml}: Store function implementation.\newline
+\item \textbf{Funenv.mli}: Environment Interface.\newline
+\item \textbf{Funenv.ml}: Environment function implementation.\newline
+\item \textbf{YarminParser.mly}: Parser definition for Menhir.\newline
+\item \textbf{YarminLexer.mll}: Lexer definition for OCamllex.\newline
+\item \textbf{Yarmin.mli}: General Interface with types.\newline
+\item \textbf{Yarmin.ml}: General Implementation of the language.\newline
+
+\end{itemize}
+
+
+\subsection{ Functions }
+	\textbf{Semantic Valutation}\newline
+\begin{itemize}
+
+	\item SEM \newline
+	\item SEMDEN \newline
+	\item SEMC \newline
+	\item SEMDV \newline
+	\item SEMDR \newline
+	\item SEMB \newline
+\end{itemize}
+	\newpage
+	\textbf{Implementations}\newline
+\begin{itemize}
+	\item LEN \newline
+	\item CAT \newline
+	\item SUBSTR \newline
+	\item EREFLECT \newline
+\end{itemize}	
+

@@ -1,0 +1,32 @@
+\documentclass[a4paper, titlepage]{book}
+\usepackage[english]{babel}
+\usepackage{fontenc}
+\usepackage[export]{adjustbox}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{quoting}
+\usepackage[table]{xcolor}
+\usepackage{float} 
+
+\quotingsetup{font=small}
+
+
+
+\begin{document}
+\title{ Yarmin  }
+
+\begin{figure}[H]
+	\maketitle
+	\centering
+	\includegraphics[width=0.4\textwidth,center]{Immagini/YarminLogo.png}
+
+\end{figure}
+
+\tableofcontents
+\input{Chapters/introduzione.tex}
+\input{Chapters/DesignChoice.tex}
+\input{Chapters/parsingAndLexing.tex}
+\input{Chapters/test.tex}
+
+
+\end{document}
