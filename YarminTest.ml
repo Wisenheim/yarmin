@@ -14,9 +14,9 @@ sem (Ifthenelse ( Eq(Eint 5, Eint 4) , Diff(Eint 5, Eint 5) , Sum(Eint 5, Eint 5
 sem (Ereflect(Estring "Prod( Eint 2, Sum(Eint 2, Eint 3) )")) (emptyenv Unbound) (emptystore Undefined) ;;
 
 
-sem (Len(Estring "ciao")) (emptyenv Unbound) (emptystore Undefined) ;;
+sem (Len(Estring "Linguaggi")) (emptyenv Unbound) (emptystore Undefined) ;;
 
-sem (Cat(Estring "ciao", Estring " mondo")) (emptyenv Unbound) (emptystore Undefined) ;;
+sem (Cat(Estring "Giaco", Estring "Fondamenti 2018...yeaah! ")) (emptyenv Unbound) (emptystore Undefined) ;;
 
 sem (Substr(Estring "ciao mondo", Eint 0, Eint 3)) (emptyenv Unbound) (emptystore Undefined) ;;
 
